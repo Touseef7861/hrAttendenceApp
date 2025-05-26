@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "883515478880",
+    "project_id": "thefirstsol-production",
+    "storage_bucket": "thefirstsol-production.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883515478880:android:7faee3bebda776feefc405",
+        "android_client_info": {
+          "package_name": "com.hrattenapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdcgYneJTzm7026cLnu7VjWMgD9qbW_OM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
