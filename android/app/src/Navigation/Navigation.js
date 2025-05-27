@@ -6,14 +6,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Login from '../Screens/Login';
 import Home from '../Screens/Home';
 import Application from '../Screens/Application';
-import Team from '../Screens/Team';
+import Team from '../Screens/Team/Team';
 import Holidays from '../Screens/Holiday';
 import Profile from '../Screens/Profile';
 import LeaveForm from '../Leave/LeaveForm';
 import LeaveDetails from '../Screens/LeaveDetails';
 import EditProfile from '../Screens/EditProfile';
 import ChangePassword from '../Screens/ChangePassword';
-import AttendanceData from '../Screens/AttendenceData';
+import AttendanceData from '../Screens/Team/AttendenceData';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
