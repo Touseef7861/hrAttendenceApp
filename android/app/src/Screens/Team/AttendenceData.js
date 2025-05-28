@@ -5,7 +5,7 @@ import moment from 'moment';
 import PDFShare from './PDFShare';
 
 const AttendanceData = ({ route, navigation }) => {
-  const { uid } = route.params;
+  const { uid ,isHR=false} = route.params;
   const [attendanceData, setAttendanceData] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,7 +88,6 @@ const AttendanceData = ({ route, navigation }) => {
         <Text style={{ width: 80 }}>{item.breakInTime ? moment(item.breakInTime.toDate()).format('hh:mm A') : '-'}</Text>
         <Text style={{ width: 80 }}>{item.breakOutTime ? moment(item.breakOutTime.toDate()).format('hh:mm A') : '-'}</Text>
         <Text style={{ width: 80 }}>{item.checkOutTime ? moment(item.checkOutTime.toDate()).format('hh:mm A') : '-'}</Text>
-        <Text style={{ width: 60 }}>{item.workingDays || '-'}</Text>
         <Text style={{ width: 60 }}>{status}</Text>
       </View>
     );
@@ -119,84 +118,99 @@ const AttendanceData = ({ route, navigation }) => {
     setShowMenu,
   });
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      {/* Header */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 10 }}>
+  <View style={{ flex: 1, backgroundColor: '#fff' }}>
+
+    {/* Header */}
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 10 }}>
+      {isHR ? (
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image style={{ height: 25, width: 25 }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/130/130882.png' }} />
+          <Image
+            style={{ height: 25, width: 25 }}
+            source={{ uri: 'https://cdn-icons-png.flaticon.com/128/130/130882.png' }}
+          />
         </TouchableOpacity>
-        <Text style={{ fontSize: 18 }}>Attendance Data</Text>
-        <TouchableOpacity onPress={() => setShowMenu(true)}>
-          <Image style={{height:20,width:20}} source={{uri:'https://cdn-icons-png.flaticon.com/128/2311/2311524.png'}}/>
-        </TouchableOpacity>
-      </View>
+      ) : (
+        <View style={{ width: 25 }} />
+      )}
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View>
-          <View style={{ flexDirection: 'row', padding: 10, backgroundColor: '#eee', borderBottomWidth: 1 }}>
-            <Text style={{ width: 30 }}>#</Text>
-            <Text style={{ width: 100 }}>Date</Text>
-            <Text style={{ width: 100 }}>Day</Text>
-            <Text style={{ width: 80 }}>Check In</Text>
-            <Text style={{ width: 80 }}>Break In</Text>
-            <Text style={{ width: 80 }}>Break Out</Text>
-            <Text style={{ width: 80 }}>Check Out</Text>
-            <Text style={{ width: 80 }}>Working Days</Text>
-            <Text style={{ width: 60 }}>Status</Text>
-          </View>
+      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Attendance Data</Text>
 
-          <View style={{ flex: 1, backgroundColor: '#fff' }}>
-            {loading ? (
-              <View style={{ flex: 1, marginRight: 350, justifyContent: 'center' }}>
-                <ActivityIndicator size="large" color="#007bff" />
-              </View>
-            ) : (
-              <FlatList
-                data={fullMonthData()}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItem}
-                showsVerticalScrollIndicator={false}
-              />
-            )}
-          </View>
-        </View>
-      </ScrollView>
-
-      <Modal visible={showMonthPicker} transparent animationType="slide">
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
-          <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 10, width: 300 }}>
-            <Text style={{ textAlign: 'center', fontSize: 18, marginBottom: 15 }}>{selectedMonth.format('MMMM YYYY')}</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-              <TouchableOpacity onPress={() => handleMonthChange(-1)}><Text style={{ fontSize: 16 }}>Previous</Text></TouchableOpacity>
-              <TouchableOpacity onPress={() => handleMonthChange(1)}><Text style={{ fontSize: 16 }}>Next</Text></TouchableOpacity>
-            </View>
-            <TouchableOpacity onPress={() => { fetchMonthData(selectedMonth); setShowMonthPicker(false); }} style={{ marginTop: 20, backgroundColor: '#007bff', padding: 10, borderRadius: 5 }}>
-              <Text style={{ color: 'white', textAlign: 'center' }}>Apply</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setShowMonthPicker(false); }} style={{ marginTop: 20, backgroundColor: '#007bff', padding: 10, borderRadius: 5 }}>
-              <Text style={{ color: 'white', textAlign: 'center' }}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal visible={showMenu} transparent animationType="fade">
-        <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} onPress={() => setShowMenu(false)} activeOpacity={1}>
-          <View style={{ position: 'absolute', top: 50, right: 15, backgroundColor: 'white', padding: 10, borderRadius: 8, elevation: 5, shadowColor: '#000' }}>
-            <TouchableOpacity onPress={handleDownload} style={{ paddingVertical: 8 }}>
-              <Text>Download PDF</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleShare} style={{ paddingVertical: 8 }}>
-              <Text>Share</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setShowMenu(false); setShowMonthPicker(true); }} style={{ paddingVertical: 8 }}>
-              <Text>History</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <TouchableOpacity onPress={() => setShowMenu(true)}>
+        <Image
+          style={{ height: 20, width: 20 }}
+          source={{ uri: 'https://cdn-icons-png.flaticon.com/128/2311/2311524.png' }}
+        />
+      </TouchableOpacity>
     </View>
-  );
+
+    {/* Attendance Table */}
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <View>
+        <View style={{ flexDirection: 'row', padding: 10, backgroundColor: '#eee', borderBottomWidth: 1 }}>
+          <Text style={{ width: 30 }}>#</Text>
+          <Text style={{ width: 100 }}>Date</Text>
+          <Text style={{ width: 100 }}>Day</Text>
+          <Text style={{ width: 80 }}>Check In</Text>
+          <Text style={{ width: 80 }}>Break In</Text>
+          <Text style={{ width: 80 }}>Break Out</Text>
+          <Text style={{ width: 80 }}>Check Out</Text>
+          <Text style={{ width: 60 }}>Status</Text>
+        </View>
+
+        {loading ? (
+          <View style={{ flex: 1, justifyContent: 'center', margin: 50 }}>
+            <ActivityIndicator size="large" color="#007bff" />
+          </View>
+        ) : (
+          <FlatList
+            data={fullMonthData()}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </View>
+    </ScrollView>
+
+    {/* Month Picker Modal */}
+    <Modal visible={showMonthPicker} transparent animationType="slide">
+      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 10, width: 300 }}>
+          <Text style={{ textAlign: 'center', fontSize: 18, marginBottom: 15 }}>{selectedMonth.format('MMMM YYYY')}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            <TouchableOpacity onPress={() => handleMonthChange(-1)}><Text style={{ fontSize: 16 }}>Previous</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => handleMonthChange(1)}><Text style={{ fontSize: 16 }}>Next</Text></TouchableOpacity>
+          </View>
+          <TouchableOpacity onPress={() => { fetchMonthData(selectedMonth); setShowMonthPicker(false); }} style={{ marginTop: 20, backgroundColor: '#007bff', padding: 10, borderRadius: 5 }}>
+            <Text style={{ color: 'white', textAlign: 'center' }}>Apply</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowMonthPicker(false)} style={{ marginTop: 10, backgroundColor: '#007bff', padding: 10, borderRadius: 5 }}>
+            <Text style={{ color: 'white', textAlign: 'center' }}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+
+    {/* Options Menu Modal */}
+    <Modal visible={showMenu} transparent animationType="fade">
+      <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} onPress={() => setShowMenu(false)} activeOpacity={1}>
+        <View style={{ position: 'absolute', top: 50, right: 15, backgroundColor: 'white', padding: 10, borderRadius: 8, elevation: 5 }}>
+          <TouchableOpacity onPress={handleDownload} style={{ paddingVertical: 8 }}>
+            <Text>Download PDF</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleShare} style={{ paddingVertical: 8 }}>
+            <Text>Share</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setShowMenu(false); setShowMonthPicker(true); }} style={{ paddingVertical: 8 }}>
+            <Text>History</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    </Modal>
+
+  </View>
+);
+
 };
 
 export default AttendanceData;

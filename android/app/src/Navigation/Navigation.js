@@ -37,7 +37,7 @@ const BottomTabs = () => (
             tabBarLabel: '',
         }}
     />
-    <Tab.Screen name="Team" component={Team}
+    <Tab.Screen name="Team" component={TeamStack}
     options={{
         headerShown:(false),
         tabBarIcon:()=>(
@@ -65,6 +65,15 @@ const BottomTabs = () => (
   </Tab.Navigator>
 );
 
+const TeamStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Team" component={Team} />
+      <Stack.Screen name="AttendanceData" component={AttendanceData} />
+    </Stack.Navigator>
+  );
+};
+
 const Navigation = () => {
   return (
     <NavigationContainer>
@@ -75,6 +84,7 @@ const Navigation = () => {
         <Stack.Screen name="LeaveDetails" component={LeaveDetails} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ChangePassword" component={ChangePassword} />
+        <Stack.Screen name="TeamList" component={Team} />
         <Stack.Screen name="AttendanceData" component={AttendanceData} />
       </Stack.Navigator>
     </NavigationContainer>

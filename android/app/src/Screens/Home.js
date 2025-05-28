@@ -36,6 +36,24 @@ const Home = () => {
   const [userData,setUserData]=useState('')
 
   const currentUser = auth().currentUser;
+  const fetchWorkingDays = async () => {
+  if (currentUser) {
+    try {
+      const snapshot = await firestore().collection('attendances').get();
+      let presentCount = 0;
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.hasOwnProperty(currentUser.uid)) {
+          presentCount++;
+        }
+      });
+      setWorkingDays(presentCount);
+    } catch (error) {
+      Alert.alert('Error fetching working days', error.message);
+    }
+  }
+};
+
  useFocusEffect(
   React.useCallback(() => {
     const fetchData = async () => {
@@ -45,23 +63,7 @@ const Home = () => {
           if (doc.exists) {
             const data = doc.data();
             setUserData(data);
-            
-
-  const snapshot = await firestore()
-        .collection('attendances')
-        .get();
-
-      let presentCount = 0;
-
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        if (data.hasOwnProperty(currentUser.uid)) {
-          presentCount++;
-        }
-      });
-
-      console.log('presentDays:', presentCount);
-      setWorkingDays(presentCount);
+            await fetchWorkingDays(); // ✅ call the refactored fetch function
           } else {
             Alert.alert("User not found");
           }
@@ -74,6 +76,7 @@ const Home = () => {
     fetchData();
   }, [currentUser])
 );
+
 
   
   
@@ -187,7 +190,6 @@ const Home = () => {
 
       case 'checkOut':
         setCheckOutTime(now);
-        setWorkingDays(newWorkingDays); 
         updateAction('checkIn');
         setActivityLog((prev) => [{ type: 'Check Out', time: timeString ,now: formattedDateTime}, ...prev]);
         await logAttendance({
@@ -196,7 +198,7 @@ const Home = () => {
           fullName: userData.name,
           userName: userData.name,
         });
-
+         await fetchWorkingDays();
         Alert.alert('Checked Out at', timeString);
         break;
     }
