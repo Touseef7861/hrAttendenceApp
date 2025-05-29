@@ -33,7 +33,7 @@ const Home = () => {
   const currentActionRef = useRef('checkIn');
   const [actionCompleted, setActionCompleted] = useState(false);
   const breakInTimeRef = useRef(null);
-  const [userData,setUserData]=useState('')
+  const [userData,setUserData]=useState({})
 
   const currentUser = auth().currentUser;
   const fetchWorkingDays = async () => {
@@ -54,6 +54,50 @@ const Home = () => {
   }
 };
 
+
+  const fetchTodayAttendance = async () => {
+  if (!currentUser) return;
+
+  try {
+    const dateKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const docSnapshot = await firestore().collection('attendances').doc(dateKey).get();
+
+    if (docSnapshot.exists) {
+      const attendanceData = docSnapshot.data();
+      if (!attendanceData) {
+        console.warn("Attendance data is undefined or null.");
+        return;
+      }
+      const userAttendance = attendanceData[currentUser.uid];
+
+      if (userAttendance) {
+        if (userAttendance.checkInTime) setCheckInTime(userAttendance.checkInTime.toDate());
+        if (userAttendance.breakInTime) setBreakInTime(userAttendance.breakInTime.toDate());
+        if (userAttendance.breakOutTime) {
+          const outTime = userAttendance.breakOutTime.toDate();
+          setBreakOutTime(outTime);
+
+          const durationMs = outTime - new Date(userAttendance.breakInTime.toDate());
+          setBreakDuration(`${Math.floor(durationMs / 60000)} min`);
+        }
+        if (userAttendance.checkOutTime) setCheckOutTime(userAttendance.checkOutTime.toDate());
+
+        if (userAttendance.checkOutTime) {
+          updateAction('checkIn');
+        } else if (userAttendance.breakOutTime) {
+          updateAction('checkOut');
+        } else if (userAttendance.breakInTime) {
+          updateAction('breakOut');
+        } else if (userAttendance.checkInTime) {
+          updateAction('breakIn');
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch today attendance', error);
+  }
+};
+
  useFocusEffect(
   React.useCallback(() => {
     const fetchData = async () => {
@@ -64,6 +108,7 @@ const Home = () => {
             const data = doc.data();
             setUserData(data);
             await fetchWorkingDays(); // ✅ call the refactored fetch function
+            await fetchTodayAttendance(data.name);
           } else {
             Alert.alert("User not found");
           }
@@ -142,7 +187,7 @@ const Home = () => {
         await logAttendance({
           checkInTime: now,
           fullName: userData.name,
-          userName: userData.name,
+          // userName: userData.name,
           
         });
         Alert.alert('Checked In at', timeString);
@@ -153,10 +198,16 @@ const Home = () => {
         breakInTimeRef.current = now;
         updateAction('breakOut');
         setActivityLog((prev) => [{ type: 'Break In', time: timeString, now: formattedDateTime }, ...prev]);
+        console.log('Logging attendance with:', {
+  checkInTime: now,
+  fullName: userData.name,
+  userName: userData.name,
+});
+
         await logAttendance({
           breakInTime: now,
           fullName: userData.name,
-          userName: userData.name,
+          // userName: userData.name,
         });
         Alert.alert('Break Started at', timeString);
         break;
@@ -174,12 +225,17 @@ const Home = () => {
             { type: 'Break Out', time: timeString, now: formattedDateTime },
             ...prev,
           ]);
+            console.log('Logging attendance with:', {
+  checkInTime: now,
+  fullName: userData.name,
+  userName: userData.name,
+});
 
           await logAttendance({
             breakOutTime: now,
             breakDuration:durationString,
             fullName: userData.name,
-          userName: userData.name,
+          // userName: userData.name,
           });
 
           Alert.alert('Break Ended at', timeString);
@@ -192,11 +248,17 @@ const Home = () => {
         setCheckOutTime(now);
         updateAction('checkIn');
         setActivityLog((prev) => [{ type: 'Check Out', time: timeString ,now: formattedDateTime}, ...prev]);
+       console.log('Logging attendance with:', {
+  checkInTime: now,
+  fullName: userData.name,
+  userName: userData.name,
+});
+
         await logAttendance({
           checkOutTime: now,
           workingDays: newWorkingDays,
           fullName: userData.name,
-          userName: userData.name,
+          // userName: userData.name,
         });
          await fetchWorkingDays();
         Alert.alert('Checked Out at', timeString);
@@ -215,8 +277,11 @@ const Home = () => {
 
   
 
-  const panResponder = useRef(
-    PanResponder.create({
+  const panResponder = useRef(null);
+
+useEffect(() => {
+  if (userData && userData.name) {
+    panResponder.current = PanResponder.create({
       onMoveShouldSetPanResponder: (_, gesture) => gesture.dx > 5,
       onPanResponderMove: Animated.event([null, { dx: pan.x }], {
         useNativeDriver: false,
@@ -238,8 +303,10 @@ const Home = () => {
           }).start();
         }
       },
-    })
-  ).current;
+    });
+  }
+}, [userData]);
+
 
   const dates = Array.from({ length: daysToShow }, (_, i) => {
     const date = new Date();
@@ -418,12 +485,15 @@ const Home = () => {
                   ? 'Swipe to Break Out'
                   : 'Swipe to Check Out'}
               </Text>
-              <Animated.View
-                {...panResponder.panHandlers}
-                style={[styles.swipeButton, { transform: [{ translateX: pan.x }] }]}
-              >
-                <Text style={styles.arrow}>{'>'}</Text>
-              </Animated.View>
+              {panResponder.current && (
+  <Animated.View
+    {...panResponder.current.panHandlers}
+    style={[styles.swipeButton, { transform: [{ translateX: pan.x }] }]}
+  >
+    <Text style={styles.arrow}>{'>'}</Text>
+  </Animated.View>
+)}
+
             </View>
           </View>
         )}

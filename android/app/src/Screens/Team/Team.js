@@ -57,7 +57,7 @@ const Team = () => {
                 source={{ uri: 'https://cdn-icons-png.flaticon.com/128/149/149852.png' }}/>
             <TextInput
               value={search}
-              placeholder="Search "
+              placeholder="Search"
               onChangeText={setSearch}
             />
           </View>
@@ -81,7 +81,7 @@ const Team = () => {
                   isHR: true,
                 })
               }
-            >
+            > 
               <Image
                 style={{ height: 60, width: 60, borderRadius: 30 }}
                 source={{ uri: user.imageUrl }}
