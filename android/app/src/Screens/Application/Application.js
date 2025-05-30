@@ -13,8 +13,8 @@ const Application = () => {
   const [isHR, setIsHR] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [filterApproved, setFilterApproved] = useState(true);
-const [filterPending, setFilterPending] = useState(true);
-const [filterRejected, setFilterRejected] = useState(true);
+  const [filterPending, setFilterPending] = useState(true);
+  const [filterRejected, setFilterRejected] = useState(true);
 
   const [stats, setStats] = useState({
   balance: 0,

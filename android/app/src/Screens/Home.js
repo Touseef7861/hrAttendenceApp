@@ -107,7 +107,7 @@ const Home = () => {
           if (doc.exists) {
             const data = doc.data();
             setUserData(data);
-            await fetchWorkingDays(); // ✅ call the refactored fetch function
+            await fetchWorkingDays(); 
             await fetchTodayAttendance(data.name);
           } else {
             Alert.alert("User not found");
@@ -121,10 +121,7 @@ const Home = () => {
     fetchData();
   }, [currentUser])
 );
-
-
-  
-  
+ 
   useEffect(() => {
     if (breakInTime && breakOutTime) {
       const durationMs = breakOutTime - breakInTime;
@@ -133,9 +130,8 @@ const Home = () => {
     }
   }, [breakInTime, breakOutTime]);
   
- 
   const pan = useRef(new Animated.ValueXY()).current;
-
+  
   const updateAction = (newAction) => {
     setCurrentAction(newAction);
     currentActionRef.current = newAction;

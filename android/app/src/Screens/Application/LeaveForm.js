@@ -74,13 +74,13 @@ useEffect(() => {
   }
 
   try {
-    // ✅ Ensure parent doc exists
+    
     await firestore()
       .collection("leaves")
       .doc(user.uid)
       .set({ createdAt: firestore.FieldValue.serverTimestamp() }, { merge: true });
 
-    // ✅ Now add leave to subcollection
+    
     await firestore()
       .collection("leaves")
       .doc(user.uid)
