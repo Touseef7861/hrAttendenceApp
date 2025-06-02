@@ -47,10 +47,10 @@ const Team = () => {
          <View style={{flexDirection:"row",alignItems:'center'}}>
            <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 }}>Team Members</Text>
 
-          <TouchableOpacity >
+          {/* <TouchableOpacity >
             <Image style={{ height: 25, width: 25,marginLeft:120 }}
                 source={{ uri: 'https://cdn-icons-png.flaticon.com/128/2311/2311524.png' }}/>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
          </View>
           <View style={{ padding: 8, borderWidth: 1, borderRadius: 15, borderColor: "blue", marginBottom: 20,marginTop:25,flexDirection:'row',alignItems:'center' }}>
             <Image style={{ height: 23, width: 23 }}

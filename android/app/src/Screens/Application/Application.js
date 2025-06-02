@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Image, Text, View, TouchableOpacity, Modal, FlatList, Button } from 'react-native';
+import { Image, Text, View, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { Picker } from '@react-native-picker/picker';
+
 
 const Application = () => {
   const navigation = useNavigation();
@@ -12,9 +14,30 @@ const Application = () => {
   const [leaves, setLeaves] = useState([]);
   const [isHR, setIsHR] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [filterApproved, setFilterApproved] = useState(true);
-  const [filterPending, setFilterPending] = useState(true);
-  const [filterRejected, setFilterRejected] = useState(true);
+const [filterApproved, setFilterApproved] = useState(false);
+const [filterPending, setFilterPending] = useState(false);
+const [filterRejected, setFilterRejected] = useState(false);
+const [filtersApplied, setFiltersApplied] = useState(false);
+const [selectedName, setSelectedName] = useState('All'); 
+const [teamMembers, setTeamMembers] = useState([]);
+
+
+useEffect(() => {
+  const fetchTeamMembers = async () => {
+    try {
+      const queryUsers = await firestore().collection('users').get()
+      const members = queryUsers.docs.map(doc => ({
+        uid: doc.id,
+        name: doc.data().name,
+      }));
+      setTeamMembers([{ name: 'All', uid: 'All' }, ...members]);
+    } catch (error) {
+      console.error('Error fetching team members:', error);
+    }
+  };
+
+  fetchTeamMembers();
+}, []);
 
   const [stats, setStats] = useState({
   balance: 0,
@@ -40,14 +63,23 @@ useEffect(() => {
 const CustomCheckbox = ({ label, onChange, checked }) => {
   return (
     <TouchableOpacity
-      style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 10,
+        padding: 10,
+        borderRadius: 8,
+      }}
       onPress={() => onChange(!checked)}
     >
-      <Text style={{ fontSize: 24 }}>{checked ? '✅' : '⬜️'}</Text>
-      <Text style={{ marginLeft: 10 }}>{label}</Text>
+      <Text style={{ fontSize: 20, color: checked ? 'dodgerblue' : 'gray' }}>
+        {checked ? '☑️' : '☐'}
+      </Text>
+      <Text style={{ marginLeft: 12, fontSize: 16 }}>{label}</Text>
     </TouchableOpacity>
   );
 };
+
   const fetchLeaves = async () => {
   try {
     const isCurrentHR = email === 'hr1@gmail.com';
@@ -102,7 +134,6 @@ const CustomCheckbox = ({ label, onChange, checked }) => {
 };
 
 
-
   const handleApply = () => {
     setModalVisible(true);
     fetchLeaves();
@@ -128,7 +159,7 @@ const CustomCheckbox = ({ label, onChange, checked }) => {
     }
   };
 
-  const filteredLeaves = () => {
+const filteredLeaves = () => {
   let data = [];
 
   if (selectedTab === 'upcoming') {
@@ -143,13 +174,25 @@ const CustomCheckbox = ({ label, onChange, checked }) => {
     data = leaves.filter(l => l.status === 'Pending');
   }
 
-  // Apply filters
+  // Filter by name if selected
+  if (selectedName !== 'All') {
+    data = data.filter(l => l.name === selectedName);
+  }
+
+  // If no filters are applied, return all
+  if (!filtersApplied || (!filterApproved && !filterPending && !filterRejected)) {
+    return data;
+  }
+
+  // Filter by selected statuses
   return data.filter(leave =>
     (filterApproved && leave.status === 'Approved') ||
     (filterPending && leave.status === 'Pending') ||
     (filterRejected && leave.status === 'Rejected')
   );
 };
+
+
 
 
   const renderLeave = ({ item, index }) => {
@@ -310,7 +353,6 @@ const CustomCheckbox = ({ label, onChange, checked }) => {
         ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No leaves found.</Text>}
       />
 
-      {/* Success Modal */}
       <Modal
         transparent
         visible={isModalVisible}
@@ -333,14 +375,14 @@ const CustomCheckbox = ({ label, onChange, checked }) => {
           </View>
         </View>
       </Modal>
-       <Modal
+      <Modal
   transparent
   visible={isModal}
   animationType="slide"
   onRequestClose={() => setModal(false)}
 >
   <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-    <View style={{ height: '60%', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 }}>
+    <View style={{ backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Filter</Text>
         <TouchableOpacity onPress={() => setModal(false)}>
@@ -352,10 +394,61 @@ const CustomCheckbox = ({ label, onChange, checked }) => {
         <CustomCheckbox label="Approved" checked={filterApproved} onChange={setFilterApproved} />
         <CustomCheckbox label="Pending" checked={filterPending} onChange={setFilterPending} />
         <CustomCheckbox label="Rejected" checked={filterRejected} onChange={setFilterRejected} />
+
+        <View style={{ marginTop: 20 }}>
+          <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Filter by Name:</Text>
+          <Picker
+            selectedValue={selectedName}
+            onValueChange={(itemValue) => setSelectedName(itemValue)}
+            style={{ height: 50, width: '100%' }}
+          >
+            {teamMembers.map(member => (
+              <Picker.Item key={member.uid} label={member.name} value={member.name} />
+            ))}
+          </Picker>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => {
+            setFiltersApplied(true);
+            setModal(false);
+          }}
+          style={{
+            marginTop: 20,
+            backgroundColor: 'dodgerblue',
+            padding: 12,
+            borderRadius: 10,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: 'white', fontSize: 16 }}>Apply</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            setFilterApproved(false);
+            setFilterPending(false);
+            setFilterRejected(false);
+            setFiltersApplied(false);
+            setSelectedName('All');
+            setModal(false);
+          }}
+          style={{
+            marginTop: 10,
+            backgroundColor: 'gray',
+            padding: 12,
+            borderRadius: 10,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: 'white', fontSize: 16 }}>Reset</Text>
+        </TouchableOpacity>
       </View>
     </View>
   </View>
 </Modal>
+
+
 
     </View>
   );
