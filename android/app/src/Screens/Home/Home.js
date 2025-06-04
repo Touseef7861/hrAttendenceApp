@@ -1,20 +1,12 @@
 import React, { useRef, useState ,useEffect} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Animated,
-  PanResponder,
-  Dimensions,
-  Alert,
+import {View,Text,FlatList,StyleSheet,TouchableOpacity,Image,Animated,PanResponder,Dimensions,Alert,
 } from 'react-native';
-import { logAttendance } from '../../../../firebase/firebase';
+import { logAttendance } from '../../../../../firebase/firebase';
 import auth from '@react-native-firebase/auth'
 import firestore  from '@react-native-firebase/firestore'
 import { useFocusEffect } from '@react-navigation/native';
+import Navigation from '../../Navigation/Navigation';
+import { useNavigation } from '@react-navigation/native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const daysToShow = 14;
@@ -35,6 +27,7 @@ const Home = () => {
   const breakInTimeRef = useRef(null);
   const [userData,setUserData]=useState({})
 
+  const navigation=useNavigation()
   const currentUser = auth().currentUser;
   const fetchWorkingDays = async () => {
   if (currentUser) {
@@ -53,7 +46,6 @@ const Home = () => {
     }
   }
 };
-
 
   const fetchTodayAttendance = async () => {
   if (!currentUser) return;
@@ -329,12 +321,16 @@ useEffect(() => {
   style={{ height: 60, width: 60, borderRadius: 30, borderWidth: 1, borderColor: 'black' }}
   source={userData?.imageUrl ? { uri: userData.imageUrl } : {uri:''}}
 />
-        <View style={{ marginLeft: 10, width: 200 }}>
+        <View style={{ marginLeft: 10, width: 170 }}>
         <Text style={{ fontSize: 19 }}>{userData?.name || ''}</Text>
         <Text>{userData?.designation || ''}</Text>
         </View>
         <TouchableOpacity style={{ height: 40, width: 40, borderRadius: 20, borderWidth: 0.1, justifyContent: 'center', alignItems: 'center' }}>
           <Image style={{ height: 20, width: 20 }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/2645/2645897.png' }} />
+        </TouchableOpacity>
+        <TouchableOpacity style={{ height: 40, width: 40, borderRadius: 20, borderWidth: 0.1, justifyContent: 'center', alignItems: 'center',marginLeft:10 }}
+        onPress={()=>navigation.navigate('CorrectionForm')}>
+          <Image style={{ height: 20, width: 20 }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/455/455791.png' }} />
         </TouchableOpacity>
       </View>
       <View>

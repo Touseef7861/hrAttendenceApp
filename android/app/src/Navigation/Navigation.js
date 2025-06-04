@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Login from '../Screens/Login';
-import Home from '../Screens/Home';
+import Home from '../Screens/Home/Home';
 import Application from '../Screens/Application/Application';
 import Team from '../Screens/Team/Team';
 import Holidays from '../Screens/Holiday';
@@ -14,6 +14,7 @@ import LeaveDetails from '../Screens/Application/LeaveDetails';
 import EditProfile from '../Screens/Profile/EditProfile';
 import ChangePassword from '../Screens/ChangePassword';
 import AttendanceData from '../Screens/Team/AttendenceData';
+import CorrectionForm from '../Screens/Home/CorrectionForm';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -86,6 +87,7 @@ const Navigation = () => {
         <Stack.Screen name="ChangePassword" component={ChangePassword} />
         <Stack.Screen name="TeamList" component={Team} />
         <Stack.Screen name="AttendanceData" component={AttendanceData} />
+        <Stack.Screen name="CorrectionForm" component={CorrectionForm} />
       </Stack.Navigator>
     </NavigationContainer>
   );
