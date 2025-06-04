@@ -43,7 +43,7 @@ const CorrectionForm = ({ navigation }) => {
   const isFormAvailable = () => {
     const today = new Date();
     const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-    return today.getDate() > lastDay - 5;
+    return today.getDate() > lastDay - 28;
   };
 
   const handleDateTimeChange = (event, selectedDate) => {
@@ -78,6 +78,20 @@ const CorrectionForm = ({ navigation }) => {
     navigation.goBack();
   };
 
+  const handleReject= async(uid)=>{
+    try{
+      await firestore().collection("manualAttendanceRequests").doc(uid).delete();
+      await firestore().collection('Notification').doc(uid).set({
+      image:'https://cdn-icons-png.flaticon.com/128/10074/10074047.png',
+      message:'Your Application for correction has been rejected',
+      time:firestore.FieldValue.serverTimestamp(),
+     })
+      fetchRequests();
+    }
+    catch(error){
+      console.error("Error rejection :", error);
+    }
+  }
   
 const handleAccept = async (entry, uid) => {
   try {
@@ -105,7 +119,11 @@ const handleAccept = async (entry, uid) => {
     };
 
     await todayRef.set({ [uid]: updatedEntry }, { merge: true });
-
+     await firestore().collection('Notification').doc(uid).set({
+      image:'https://cdn-icons-png.flaticon.com/128/10074/10074047.png',
+      message:'Your Application for correction has been accepted',
+      time:firestore.FieldValue.serverTimestamp(),
+     })
     await firestore().collection("manualAttendanceRequests").doc(uid).delete();
     fetchRequests();
 
@@ -117,7 +135,16 @@ const handleAccept = async (entry, uid) => {
 };
 
   const renderHRScreen = () => (
-    <ScrollView style={{ padding: 16 }}>
+    <ScrollView style={{  }}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
+      <TouchableOpacity style={{ margin: 10 }} onPress={() => navigation.goBack()}>
+        <Image
+          style={{ height: 20, width: 20 }}
+          source={{ uri: "https://cdn-icons-png.flaticon.com/128/130/130882.png" }}
+        />
+      </TouchableOpacity>
+      <Text style={{ marginLeft: 90, fontSize: 18 }}>Correction Form</Text>
+    </View>
       {requests.map((req, i) => (
         <View
           key={i}
@@ -130,8 +157,10 @@ const handleAccept = async (entry, uid) => {
               <Text>Date: {entry.date}</Text>
               <Text>Check In: {entry.checkInTime || "-"}</Text>
               <Text>Check Out: {entry.checkOutTime || "-"}</Text>
+              <View style={{flexDirection:'row',gap:20,padding:20}}>
               <TouchableOpacity
-                style={{ backgroundColor: "green", padding: 5, marginTop: 5 }}
+              onPress={()=>handleReject(req.uid)}
+                style={{ backgroundColor: "red", padding: 5, marginTop: 5 }}
               >
                 <Text style={{ color: "white" }}>Reject</Text>
               </TouchableOpacity>
@@ -141,6 +170,7 @@ const handleAccept = async (entry, uid) => {
               >
                 <Text style={{ color: "white" }}>Accept</Text>
               </TouchableOpacity>
+              </View>
             </View>
           ))}
         </View>

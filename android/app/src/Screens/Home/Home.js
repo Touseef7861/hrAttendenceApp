@@ -325,7 +325,8 @@ useEffect(() => {
         <Text style={{ fontSize: 19 }}>{userData?.name || ''}</Text>
         <Text>{userData?.designation || ''}</Text>
         </View>
-        <TouchableOpacity style={{ height: 40, width: 40, borderRadius: 20, borderWidth: 0.1, justifyContent: 'center', alignItems: 'center' }}>
+        <TouchableOpacity style={{ height: 40, width: 40, borderRadius: 20, borderWidth: 0.1, justifyContent: 'center', alignItems: 'center' }}
+        onPress={()=>navigation.navigate('Notification')}>
           <Image style={{ height: 20, width: 20 }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/2645/2645897.png' }} />
         </TouchableOpacity>
         <TouchableOpacity style={{ height: 40, width: 40, borderRadius: 20, borderWidth: 0.1, justifyContent: 'center', alignItems: 'center',marginLeft:10 }}

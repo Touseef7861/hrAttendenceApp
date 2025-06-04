@@ -15,6 +15,7 @@ import EditProfile from '../Screens/Profile/EditProfile';
 import ChangePassword from '../Screens/ChangePassword';
 import AttendanceData from '../Screens/Team/AttendenceData';
 import CorrectionForm from '../Screens/Home/CorrectionForm';
+import Notification from '../Screens/Home/Notification';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -88,6 +89,7 @@ const Navigation = () => {
         <Stack.Screen name="TeamList" component={Team} />
         <Stack.Screen name="AttendanceData" component={AttendanceData} />
         <Stack.Screen name="CorrectionForm" component={CorrectionForm} />
+        <Stack.Screen name="Notification" component={Notification} />
       </Stack.Navigator>
     </NavigationContainer>
   );
