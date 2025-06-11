@@ -43,7 +43,7 @@ const CorrectionForm = ({ navigation }) => {
   const isFormAvailable = () => {
     const today = new Date();
     const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-    return today.getDate() > lastDay - 28;
+    return today.getDate() > lastDay - 20;
   };
 
   const handleDateTimeChange = (event, selectedDate) => {
@@ -78,20 +78,44 @@ const CorrectionForm = ({ navigation }) => {
     navigation.goBack();
   };
 
-  const handleReject= async(uid)=>{
-    try{
-      await firestore().collection("manualAttendanceRequests").doc(uid).delete();
-      await firestore().collection('Notification').doc(uid).set({
-      image:'https://cdn-icons-png.flaticon.com/128/10074/10074047.png',
-      message:'Your Application for correction has been rejected',
-      time:firestore.FieldValue.serverTimestamp(),
-     })
+  const handleReject = async (entry, uid) => {
+  try {
+    const requestRef = firestore().collection("manualAttendanceRequests").doc(uid);
+    const requestDoc = await requestRef.get();
+
+    if (requestDoc.exists) {
+      const existingEntries = requestDoc.data().entries || [];
+
+      // Remove only the exact entry (match by date, checkInTime, and checkOutTime)
+      const remainingEntries = existingEntries.filter(e =>
+        !(e.date === entry.date &&
+          e.checkInTime === entry.checkInTime &&
+          e.checkOutTime === entry.checkOutTime)
+      );
+
+      if (remainingEntries.length > 0) {
+        await requestRef.update({ entries: remainingEntries });
+      } else {
+        await requestRef.delete();
+      }
+
+      // Send rejection notification
+    await firestore()
+  .collection('Notification')
+  .doc(uid)
+  .collection('notifications')
+  .add({
+    image: 'https://cdn-icons-png.flaticon.com/128/14255/14255256.png',
+    message: 'Your Application for correction has been rejected',
+    time: firestore.FieldValue.serverTimestamp(),
+  });
+
       fetchRequests();
     }
-    catch(error){
-      console.error("Error rejection :", error);
-    }
+  } catch (error) {
+    console.error("Error rejection:", error);
   }
+};
   
 const handleAccept = async (entry, uid) => {
   try {
@@ -99,14 +123,10 @@ const handleAccept = async (entry, uid) => {
     const docSnapshot = await todayRef.get();
     const dayData = docSnapshot.exists ? docSnapshot.data() : {};
 
-    // Helper to combine date + time into JS Date object
     const toTimestamp = (dateStr, timeStr) => {
       const [hour, minute] = timeStr.split(":").map(Number);
       const date = new Date(dateStr);
-      date.setHours(hour);
-      date.setMinutes(minute);
-      date.setSeconds(0);
-      date.setMilliseconds(0);
+      date.setHours(hour, minute, 0, 0);
       return firestore.Timestamp.fromDate(date);
     };
 
@@ -119,20 +139,44 @@ const handleAccept = async (entry, uid) => {
     };
 
     await todayRef.set({ [uid]: updatedEntry }, { merge: true });
-     await firestore().collection('Notification').doc(uid).set({
-      image:'https://cdn-icons-png.flaticon.com/128/10074/10074047.png',
-      message:'Your Application for correction has been accepted',
-      time:firestore.FieldValue.serverTimestamp(),
-     })
-    await firestore().collection("manualAttendanceRequests").doc(uid).delete();
-    fetchRequests();
 
+    await firestore()
+  .collection('Notification')
+  .doc(uid)
+  .collection('notifications')
+  .add({
+    image: 'https://cdn-icons-png.flaticon.com/128/10074/10074047.png',
+    message: 'Your Application for correction has been accepted',
+    time: firestore.FieldValue.serverTimestamp(),
+  });
+
+
+    // 🛠 Only remove this entry, not the whole document
+    const requestRef = firestore().collection("manualAttendanceRequests").doc(uid);
+    const requestDoc = await requestRef.get();
+
+    if (requestDoc.exists) {
+      const existingEntries = requestDoc.data().entries || [];
+
+      const remainingEntries = existingEntries.filter(
+        e => e.date !== entry.date
+      );
+
+      if (remainingEntries.length > 0) {
+        await requestRef.update({ entries: remainingEntries });
+      } else {
+        await requestRef.delete();
+      }
+    }
+
+    fetchRequests();
     Alert.alert("Success", "Correction accepted and attendance updated.");
   } catch (error) {
     console.error("Error accepting correction:", error);
     Alert.alert("Error", "Failed to accept correction.");
   }
 };
+
 
   const renderHRScreen = () => (
     <ScrollView style={{  }}>
@@ -159,10 +203,10 @@ const handleAccept = async (entry, uid) => {
               <Text>Check Out: {entry.checkOutTime || "-"}</Text>
               <View style={{flexDirection:'row',gap:20,padding:20}}>
               <TouchableOpacity
-              onPress={()=>handleReject(req.uid)}
+              onPress={()=>handleReject(entry,req.uid)}
                 style={{ backgroundColor: "red", padding: 5, marginTop: 5 }}
               >
-                <Text style={{ color: "white" }}>Reject</Text>
+                <Text style={{ color: "white" }}>Reject</Text> 
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleAccept(entry, req.uid)}
@@ -194,6 +238,7 @@ const handleAccept = async (entry, uid) => {
     </View>
 
     {/* Form or message */}
+    <ScrollView>
     {isFormAvailable() ? (
     <View style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 18, marginBottom: 10 }}>Correction Form</Text>
@@ -280,6 +325,7 @@ const handleAccept = async (entry, uid) => {
         </Text>
       </View>
     )}
+    </ScrollView>
   </View>
 );
 
