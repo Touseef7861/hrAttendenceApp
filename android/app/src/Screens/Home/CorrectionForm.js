@@ -15,10 +15,13 @@ const CorrectionForm = ({ navigation }) => {
   const user = auth().currentUser;
 
   useEffect(() => {
-    const checkHR = () => {
+    const checkHR =async () => {
       if (user?.email === "hr1@gmail.com") {
         setIsHR(true);
         fetchRequests();
+      }else{
+        const doc = await firestore().collection('manualAttendanceRequests').doc(user.uid).get()
+        if(doc.exists) setCorrections(doc.data().entries || [])
       }
     };
     checkHR();
@@ -75,7 +78,8 @@ const CorrectionForm = ({ navigation }) => {
     });
 
     Alert.alert("Submitted", "Correction request submitted.");
-    navigation.goBack();
+
+    // navigation.goBack();
   };
 
   const handleReject = async (entry, uid) => {
@@ -150,7 +154,6 @@ const handleAccept = async (entry, uid) => {
     time: firestore.FieldValue.serverTimestamp(),
   });
 
-
     // 🛠 Only remove this entry, not the whole document
     const requestRef = firestore().collection("manualAttendanceRequests").doc(uid);
     const requestDoc = await requestRef.get();
@@ -176,7 +179,6 @@ const handleAccept = async (entry, uid) => {
     Alert.alert("Error", "Failed to accept correction.");
   }
 };
-
 
   const renderHRScreen = () => (
     <ScrollView style={{  }}>
@@ -251,6 +253,32 @@ const handleAccept = async (entry, uid) => {
           <Text>Date: {entry.date}</Text>
           <Text>Check In: {entry.checkInTime || "-"}</Text>
           <Text>Check Out: {entry.checkOutTime || "-"}</Text>
+          <View style={{ flexDirection: "row", gap: 10, marginTop: 5 }}>
+    <TouchableOpacity
+      style={{ backgroundColor: "orange", padding: 5, borderRadius: 5 }}
+      onPress={() => {
+        setTempEntry(entry);
+        setModalVisible(true);
+        setCorrections(corrections.filter((_, i) => i !== index)); // remove the old one temporarily
+      }}
+    >
+      <Text style={{ color: "white" }}>Edit</Text>
+    </TouchableOpacity> 
+
+    <TouchableOpacity
+      style={{ backgroundColor: "red", padding: 5, borderRadius: 5 }}
+      onPress={async () => {
+        const updated = corrections.filter((_, i) => i !== index);
+        setCorrections(updated);
+       await firestore().collection("manualAttendanceRequests").doc(user.uid).set({
+        entries : updated,
+        createdAt : firestore.FieldValue.serverTimestamp()
+       });
+      }}
+    >
+      <Text style={{ color: "white" }}>Delete</Text>
+    </TouchableOpacity>
+  </View>
         </View>
       ))}
 
