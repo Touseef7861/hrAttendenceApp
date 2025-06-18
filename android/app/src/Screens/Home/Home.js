@@ -5,7 +5,6 @@ import { logAttendance } from '../../../../../firebase/firebase';
 import auth from '@react-native-firebase/auth'
 import firestore  from '@react-native-firebase/firestore'
 import { useFocusEffect } from '@react-navigation/native';
-import Navigation from '../../Navigation/Navigation';
 import { useNavigation } from '@react-navigation/native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;

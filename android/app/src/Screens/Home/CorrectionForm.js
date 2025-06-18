@@ -62,12 +62,31 @@ const CorrectionForm = ({ navigation }) => {
     setShowPicker(null);
   };
 
-  const addTempEntry = () => {
-    if (!tempEntry.date) return Alert.alert("Date is required");
-    setCorrections([...corrections, tempEntry]);
-    setTempEntry({ date: "", checkInTime: "", checkOutTime: "" });
-    setModalVisible(false);
-  };
+ const addTempEntry = () => {
+  if (!tempEntry.date) return Alert.alert("Date is required");
+
+  let updatedCorrections = [...corrections];
+
+  if (typeof tempEntry.index === "number") {
+    // Edit mode
+    updatedCorrections[tempEntry.index] = {
+      date: tempEntry.date,
+      checkInTime: tempEntry.checkInTime,
+      checkOutTime: tempEntry.checkOutTime,
+    };
+  } else {
+    // Add mode
+    updatedCorrections.push({
+      date: tempEntry.date,
+      checkInTime: tempEntry.checkInTime,
+      checkOutTime: tempEntry.checkOutTime,
+    });
+  }
+
+  setCorrections(updatedCorrections);
+  setTempEntry({ date: "", checkInTime: "", checkOutTime: "" });
+  setModalVisible(false);
+};
 
   const submitRequest = async () => {
     if (corrections.length === 0) return Alert.alert("Please add correction entries");
@@ -75,6 +94,7 @@ const CorrectionForm = ({ navigation }) => {
     await firestore().collection("manualAttendanceRequests").doc(user.uid).set({
       entries: corrections,
       createdAt: firestore.FieldValue.serverTimestamp(),
+      status:'pending'
     });
 
     Alert.alert("Submitted", "Correction request submitted.");
@@ -257,9 +277,9 @@ const handleAccept = async (entry, uid) => {
     <TouchableOpacity
       style={{ backgroundColor: "orange", padding: 5, borderRadius: 5 }}
       onPress={() => {
-        setTempEntry(entry);
+        setTempEntry({ ...entry, index });
         setModalVisible(true);
-        setCorrections(corrections.filter((_, i) => i !== index)); // remove the old one temporarily
+        // setCorrections(corrections.filter((_, i) => i !== index)); 
       }}
     >
       <Text style={{ color: "white" }}>Edit</Text>
@@ -276,7 +296,7 @@ const handleAccept = async (entry, uid) => {
        });
       }}
     >
-      <Text style={{ color: "white" }}>Delete</Text>
+      <Text style={{ color: "white" }}>Delete</Text> 
     </TouchableOpacity>
   </View>
         </View>
@@ -297,28 +317,29 @@ const handleAccept = async (entry, uid) => {
       </TouchableOpacity>
 
       {/* Modal */}
-      <Modal visible={modalVisible} animationType="slide">
-        <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: 'rgba(0,0,0,0.3)'}}>
+          <View style={{height: '50%', backgroundColor: 'white', borderTopLeftRadius: 40, borderTopRightRadius: 40, padding: 20,}}>
           <Text style={{ fontSize: 18, marginBottom: 10 }}>Add Correction</Text>
           <TouchableOpacity
             onPress={() => setShowPicker({ type: "date" })}
             style={{ marginVertical: 5 }}
           >
-            <Text>Date: {tempEntry.date || "Select"}</Text>
+            <Text style={{ fontSize: 15 }}>Date: {tempEntry.date || "Select"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setShowPicker({ type: "checkInTime" })}
             style={{ marginVertical: 5 }}
           >
-            <Text>Check In: {tempEntry.checkInTime || "Select"}</Text>
+            <Text style={{ fontSize: 15 }}>Check In: {tempEntry.checkInTime || "Select"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setShowPicker({ type: "checkOutTime" })}
             style={{ marginVertical: 5 }}
           >
-            <Text>Check Out: {tempEntry.checkOutTime || "Select"}</Text>
+            <Text style={{ fontSize: 15 }}  >Check Out: {tempEntry.checkOutTime || "Select"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -329,11 +350,15 @@ const handleAccept = async (entry, uid) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => setModalVisible(false)}
+            onPress={() => {
+            setModalVisible(false);
+            setTempEntry({ date: "", checkInTime: "", checkOutTime: "" }); 
+}}
             style={{ padding: 10, marginTop: 10 }}
           >
             <Text style={{ color: "red", textAlign: "center" }}>Cancel</Text>
           </TouchableOpacity>
+        </View>
         </View>
 
         {showPicker && (
