@@ -94,7 +94,7 @@ const CorrectionForm = ({ navigation }) => {
     await firestore().collection("manualAttendanceRequests").doc(user.uid).set({
       entries: corrections,
       createdAt: firestore.FieldValue.serverTimestamp(),
-      status:'pending'
+      // status:'pending'
     });
 
     Alert.alert("Submitted", "Correction request submitted.");

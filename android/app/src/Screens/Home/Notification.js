@@ -10,6 +10,7 @@ const Notification = ({ navigation }) => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
+        
         const snapshot = await firestore()
           .collection('Notification')
           .doc(user.uid)
