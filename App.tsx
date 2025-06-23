@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View,Image } from 'react-native';
-import Navigation from './android/app/src/Navigation/Navigation';
+import Navigation from './src/Navigation/Navigation';
 
 
 const SplashScreen = () => {

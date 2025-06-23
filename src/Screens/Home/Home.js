@@ -1,7 +1,7 @@
 import React, { useRef, useState ,useEffect} from 'react';
 import {View,Text,FlatList,StyleSheet,TouchableOpacity,Image,Animated,PanResponder,Dimensions,Alert,
 } from 'react-native';
-import { logAttendance } from '../../../../../firebase/firebase';
+import { logAttendance } from '../../../firebase/firebase';
 import auth from '@react-native-firebase/auth'
 import firestore  from '@react-native-firebase/firestore'
 import { useFocusEffect } from '@react-navigation/native';
