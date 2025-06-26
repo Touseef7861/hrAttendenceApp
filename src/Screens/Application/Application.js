@@ -4,7 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { Picker } from '@react-native-picker/picker';
-
+import { useTheme } from "../../ThemeContext";
+import AppText from "../../Components/AppText";
 
 const Application = () => {
   const navigation = useNavigation();
@@ -20,7 +21,7 @@ const [filterRejected, setFilterRejected] = useState(false);
 const [filtersApplied, setFiltersApplied] = useState(false);
 const [selectedName, setSelectedName] = useState('All'); 
 const [teamMembers, setTeamMembers] = useState([]);
-
+const {theme} = useTheme()
 
 useEffect(() => {
   const fetchTeamMembers = async () => {
@@ -307,30 +308,30 @@ const filteredLeaves = () => {
 
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1,backgroundColor:theme.background }}>
       {/* Header */}
       <View style={{ flexDirection: 'row', margin: 20, alignItems: 'center' }}>
-        <Text style={{ fontSize: 20 }}>All Leaves</Text>
+        <AppText style={{ fontSize: 20 }}>All Leaves</AppText>
         <TouchableOpacity
           style={{ marginLeft: 150 }}
           onPress={() => navigation.navigate('LeaveForm', { onApply: handleApply })}
         >
-          <Image style={{ height: 25, width: 25 }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/3161/3161837.png' }} />
+          <Image style={{ height: 25, width: 25,tintColor:theme.text }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/3161/3161837.png' }} />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginLeft: 20 }} onPress={()=>showModal()}>
-          <Image style={{ height: 25, width: 25 }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/8017/8017777.png' }} />
+          <Image style={{ height: 25, width: 25,tintColor: theme.text }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/8017/8017777.png' }} />
         </TouchableOpacity>
       </View>
 
       {/* Summary Cards */}
       <View>
         <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-          <View style={[styles.card,{borderColor:'blue'}]}><Text style={styles.title}>Leave Balance</Text><Text style={[styles.value,{color:'blue'}]}>{stats.balance}</Text></View>
-          <View style={[styles.card,{borderColor:"orange"}]}><Text style={styles.title}>Approved</Text><Text style={[styles.value,{color:'orange'}]}>{stats.approved}</Text></View>
+          <View style={[styles.card,{borderColor:'blue'}]}><AppText style={styles.title}>Leave Balance</AppText><Text style={[styles.value,{color:'blue'}]}>{stats.balance}</Text></View>
+          <View style={[styles.card,{borderColor:"orange"}]}><AppText style={styles.title}>Approved</AppText><Text style={[styles.value,{color:'orange'}]}>{stats.approved}</Text></View>
         </View>
         <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.card,{borderColor:'blue'}]}><Text style={styles.title}>Pending</Text><Text style={[styles.value,{color:'blue'}]}>{stats.pending}</Text></View>
-          <View style={[styles.card,{borderColor:'red'}]}><Text style={styles.title}>Cancelled</Text><Text style={[styles.value,{color:'red'}]}>{stats.cancelled}</Text></View>
+          <View style={[styles.card,{borderColor:'blue'}]}><AppText style={styles.title}>Pending</AppText><Text style={[styles.value,{color:'blue'}]}>{stats.pending}</Text></View>
+          <View style={[styles.card,{borderColor:'red'}]}><AppText style={styles.title}>Cancelled</AppText><Text style={[styles.value,{color:'red'}]}>{stats.cancelled}</Text></View>
         </View>
       </View>
 
@@ -338,9 +339,9 @@ const filteredLeaves = () => {
       <View style={{ flexDirection: 'row',  marginVertical: 15 }}>
         {['upcoming', 'post', 'team'].map(tab => (
           <TouchableOpacity key={tab} onPress={() => setSelectedTab(tab)} style={{backgroundColor: selectedTab === tab ? 'skyblue' : 'transparent',height:50,width:120,justifyContent:'center',alignItems:'center',borderRadius:10}}>
-            <Text style={{ fontSize: 16, fontWeight: selectedTab === tab ? 'bold' : 'normal' }}>
+            <AppText style={{ fontSize: 16, fontWeight: selectedTab === tab ? 'bold' : 'normal' }}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </Text>
+            </AppText>
           </TouchableOpacity>
         ))}
       </View>

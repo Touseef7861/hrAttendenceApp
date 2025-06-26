@@ -3,6 +3,9 @@ import {View,Text,TouchableOpacity,Image,ScrollView,Modal,Alert,} from "react-na
 import DateTimePicker from "@react-native-community/datetimepicker";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import { useTheme } from "../../ThemeContext";
+import AppText from "../../Components/AppText";
+import AppButton from "../../Components/AppButton";
 
 const CorrectionForm = ({ navigation }) => {
   const [corrections, setCorrections] = useState([]);
@@ -11,6 +14,7 @@ const CorrectionForm = ({ navigation }) => {
   const [showPicker, setShowPicker] = useState(null);
   const [isHR, setIsHR] = useState(false);
   const [requests, setRequests] = useState([]);
+  const {theme} = useTheme()
 
   const user = auth().currentUser;
 
@@ -201,40 +205,40 @@ const handleAccept = async (entry, uid) => {
 };
 
   const renderHRScreen = () => (
-    <ScrollView style={{  }}>
+    <ScrollView style={{backgroundColor:theme.background   }}>
       <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
       <TouchableOpacity style={{ margin: 10 }} onPress={() => navigation.goBack()}>
         <Image
-          style={{ height: 20, width: 20 }}
+          style={{ height: 20, width: 20 , tintColor: theme.text}}
           source={{ uri: "https://cdn-icons-png.flaticon.com/128/130/130882.png" }}
         />
       </TouchableOpacity>
-      <Text style={{ marginLeft: 90, fontSize: 18 }}>Correction Form</Text>
+      <AppText style={{ marginLeft: 90, fontSize: 18 }}>Correction Form</AppText>
     </View>
       {requests.map((req, i) => (
         <View
           key={i}
-          style={{ borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 10 }}
+          style={{ borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 10 ,borderColor:theme.text}}
         >
-          <Text>Name: {req.name}</Text>
+          <AppText>Name: {req.name}</AppText>
           <Image source={{ uri: req.image }} style={{ width: 50, height: 50, borderRadius: 25 }} />
           {req.entries.map((entry, j) => (
             <View key={j} style={{ marginVertical: 5 }}>
-              <Text>Date: {entry.date}</Text>
-              <Text>Check In: {entry.checkInTime || "-"}</Text>
-              <Text>Check Out: {entry.checkOutTime || "-"}</Text>
+              <AppText>Date: {entry.date}</AppText>
+              <AppText>Check In: {entry.checkInTime || "-"}</AppText>
+              <AppText>Check Out: {entry.checkOutTime || "-"}</AppText>
               <View style={{flexDirection:'row',gap:20,padding:20}}>
               <TouchableOpacity
               onPress={()=>handleReject(entry,req.uid)}
                 style={{ backgroundColor: "red", padding: 5, marginTop: 5 }}
               >
-                <Text style={{ color: "white" }}>Reject</Text> 
+                <AppText style={{ color: "white" }}>Reject</AppText> 
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleAccept(entry, req.uid)}
                 style={{ backgroundColor: "green", padding: 5, marginTop: 5 }}
               >
-                <Text style={{ color: "white" }}>Accept</Text>
+                <AppText style={{ color: "white" }}>Accept</AppText>
               </TouchableOpacity>
               </View>
             </View>
@@ -256,23 +260,23 @@ const handleAccept = async (entry, uid) => {
           source={{ uri: "https://cdn-icons-png.flaticon.com/128/130/130882.png" }}
         />
       </TouchableOpacity>
-      <Text style={{ marginLeft: 90, fontSize: 18 }}>Correction Form</Text>
+      <AppText style={{ marginLeft: 90, fontSize: 18 }}>Correction Form</AppText>
     </View>
 
     {/* Form or message */}
     <ScrollView>
     {isFormAvailable() ? (
     <View style={{ flex: 1, padding: 16 }}>
-      <Text style={{ fontSize: 18, marginBottom: 10 }}>Correction Form</Text>
+      <AppText style={{ fontSize: 18, marginBottom: 10 }}>Correction Form</AppText>
 
       {corrections.map((entry, index) => (
         <View
           key={index}
           style={{ borderWidth: 1, padding: 10, borderRadius: 8, marginBottom: 10 }}
         >
-          <Text>Date: {entry.date}</Text>
-          <Text>Check In: {entry.checkInTime || "-"}</Text>
-          <Text>Check Out: {entry.checkOutTime || "-"}</Text>
+          <AppText>Date: {entry.date}</AppText>
+          <AppText>Check In: {entry.checkInTime || "-"}</AppText>
+          <AppText>Check Out: {entry.checkOutTime || "-"}</AppText>
           <View style={{ flexDirection: "row", gap: 10, marginTop: 5 }}>
     <TouchableOpacity
       style={{ backgroundColor: "orange", padding: 5, borderRadius: 5 }}
@@ -282,7 +286,7 @@ const handleAccept = async (entry, uid) => {
         // setCorrections(corrections.filter((_, i) => i !== index)); 
       }}
     >
-      <Text style={{ color: "white" }}>Edit</Text>
+      <AppText style={{ color: "white" }}>Edit</AppText>
     </TouchableOpacity> 
 
     <TouchableOpacity
@@ -296,7 +300,7 @@ const handleAccept = async (entry, uid) => {
        });
       }}
     >
-      <Text style={{ color: "white" }}>Delete</Text> 
+      <AppText style={{ color: "white" }}>Delete</AppText> 
     </TouchableOpacity>
   </View>
         </View>
@@ -306,47 +310,47 @@ const handleAccept = async (entry, uid) => {
         onPress={() => setModalVisible(true)}
         style={{ backgroundColor: "#007AFF", padding: 10, borderRadius: 8 }}
       >
-        <Text style={{ color: "white", textAlign: "center" }}>+ Add Field</Text>
+        <AppText style={{ color: "white", textAlign: "center" }}>+ Add Field</AppText>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={submitRequest}
         style={{ backgroundColor: "green", marginTop: 10, padding: 12, borderRadius: 8 }}
       >
-        <Text style={{ color: "white", textAlign: "center" }}>Submit</Text>
+        <AppText style={{ color: "white", textAlign: "center" }}>Submit</AppText>
       </TouchableOpacity>
 
       {/* Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: 'rgba(0,0,0,0.3)'}}>
           <View style={{height: '50%', backgroundColor: 'white', borderTopLeftRadius: 40, borderTopRightRadius: 40, padding: 20,}}>
-          <Text style={{ fontSize: 18, marginBottom: 10 }}>Add Correction</Text>
+          <AppText style={{ fontSize: 18, marginBottom: 10 }}>Add Correction</AppText>
           <TouchableOpacity
             onPress={() => setShowPicker({ type: "date" })}
             style={{ marginVertical: 5 }}
           >
-            <Text style={{ fontSize: 15 }}>Date: {tempEntry.date || "Select"}</Text>
+            <AppText>Date: {tempEntry.date || "Select"}</AppText>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setShowPicker({ type: "checkInTime" })}
             style={{ marginVertical: 5 }}
           >
-            <Text style={{ fontSize: 15 }}>Check In: {tempEntry.checkInTime || "Select"}</Text>
+            <AppText>Check In: {tempEntry.checkInTime || "Select"}</AppText>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setShowPicker({ type: "checkOutTime" })}
             style={{ marginVertical: 5 }}
           >
-            <Text style={{ fontSize: 15 }}  >Check Out: {tempEntry.checkOutTime || "Select"}</Text>
+            <AppText>Check Out: {tempEntry.checkOutTime || "Select"}</AppText>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={addTempEntry}
             style={{ backgroundColor: "#007AFF", padding: 10, marginTop: 10, borderRadius: 8 }}
           >
-            <Text style={{ color: "white", textAlign: "center" }}>Add</Text>
+            <AppText style={{ color: "white", textAlign: "center" }}>Add</AppText>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -356,7 +360,7 @@ const handleAccept = async (entry, uid) => {
 }}
             style={{ padding: 10, marginTop: 10 }}
           >
-            <Text style={{ color: "red", textAlign: "center" }}>Cancel</Text>
+            <AppText style={{ color: "red", textAlign: "center" }}>Cancel</AppText>
           </TouchableOpacity>
         </View>
         </View>
@@ -373,9 +377,9 @@ const handleAccept = async (entry, uid) => {
     </View>
   ) : (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 16 }}>
-        <Text style={{ fontSize: 16, textAlign: "center" }}>
+        <AppText style={{ fontSize: 16, textAlign: "center" }}>
           Correction Form is only available during the last 5 days of the month.
-        </Text>
+        </AppText>
       </View>
     )}
     </ScrollView>

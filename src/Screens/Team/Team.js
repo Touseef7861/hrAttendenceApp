@@ -3,6 +3,9 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image ,Tex
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../ThemeContext';
+import AppText from '../../Components/AppText';
+import AppButton from '../../Components/AppButton';
 
 const Team = () => {
   const currentUser = auth().currentUser;
@@ -11,6 +14,7 @@ const Team = () => {
   const [search,setSearch] = useState('')
   const [isHR, setIsHR] = useState(false);
   const navigation = useNavigation();
+  const {theme} = useTheme()
 
   useEffect(() => {
     if (currentUser.email === 'hr1@gmail.com') {
@@ -41,24 +45,26 @@ const Team = () => {
     user.email?.toLowerCase().includes(search.toLowerCase())
   );
   return (
-    <ScrollView style={{ padding: 20 }}>
+    <ScrollView style={{ padding: 20 ,backgroundColor:theme.background}}>
      {isHR && (
         <>
          <View style={{flexDirection:"row",alignItems:'center'}}>
-           <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 }}>Team Members</Text>
+           <AppText style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 }}>Team Members</AppText>
 
           {/* <TouchableOpacity >
             <Image style={{ height: 25, width: 25,marginLeft:120 }}
                 source={{ uri: 'https://cdn-icons-png.flaticon.com/128/2311/2311524.png' }}/>
           </TouchableOpacity> */}
          </View>
-          <View style={{ padding: 8, borderWidth: 1, borderRadius: 15, borderColor: "blue", marginBottom: 20,marginTop:25,flexDirection:'row',alignItems:'center' }}>
-            <Image style={{ height: 23, width: 23 }}
+          <View style={{ padding: 8, borderWidth: 1, borderRadius: 15, borderColor:theme.text, marginBottom: 20,marginTop:25,flexDirection:'row',alignItems:'center' }}>
+            <Image style={{ height: 23, width: 23,tintColor:theme.text }}
                 source={{ uri: 'https://cdn-icons-png.flaticon.com/128/149/149852.png' }}/>
             <TextInput
               value={search}
               placeholder="Search"
               onChangeText={setSearch}
+              style={{color:theme.text}}
+              placeholderTextColor={theme.text}
             />
           </View>
 
@@ -73,6 +79,8 @@ const Team = () => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: 10,
+                backgroundColor:theme.background,
+                borderColor:theme.text
               }}
               onPress={() =>
                 navigation.navigate('AttendanceData', {
@@ -87,8 +95,8 @@ const Team = () => {
                 source={{ uri: user.imageUrl }}
               />
               <View>
-                <Text>{user.name}</Text>
-                <Text style={{ opacity: 0.5 }}>{user.role}</Text>
+                <AppText>{user.name}</AppText>
+                <AppText style={{ opacity: 0.5 }}>{user.role}</AppText>
               </View>
             </TouchableOpacity>
           ))}

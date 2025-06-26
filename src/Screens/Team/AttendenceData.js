@@ -3,6 +3,7 @@ import { View,Text,FlatList,TouchableOpacity,Modal,Image,ScrollView,ActivityIndi
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 import PDFShare from './PDFShare';
+import Holiday from '../Holiday';
 
 const AttendanceData = ({ route, navigation }) => {
   const { uid ,isHR=false} = route.params;
@@ -12,6 +13,7 @@ const AttendanceData = ({ route, navigation }) => {
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(moment());
   const [showMenu, setShowMenu] = useState(false);
+  const [holidaysfetch, setHolidaysfetch]=useState([]);
 
   useEffect(() => {
     fetchMonthData(selectedMonth);
@@ -35,6 +37,7 @@ const AttendanceData = ({ route, navigation }) => {
     });
 
     await fetchLeaves(uid);
+    await fetchHolidays();
     setAttendanceData(data);
     setLoading(false);
   };
@@ -52,6 +55,23 @@ const AttendanceData = ({ route, navigation }) => {
     setLeaveData(leaveDocs);
   };
 
+  const fetchHolidays = async () => {
+  try {
+    const snapshot = await firestore()
+      .collection('holidays')
+      .get();
+
+    const holidaysDocs = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    setHolidaysfetch(holidaysDocs);
+  } catch (error) {
+    console.error('Error fetching holidays:', error);
+  }
+};
+
   const getLeaveForDate = (date) => {
     return leaveData.find(
       (leave) =>
@@ -59,6 +79,13 @@ const AttendanceData = ({ route, navigation }) => {
         moment(date, 'YYYY-MM-DD').isSameOrBefore(moment(leave.endDate, 'M/D/YYYY'))
     );
   };
+const getHolidayForDate = (date) => {
+  return holidaysfetch.find(
+    (holiday) =>
+      moment(date, 'YYYY-MM-DD').isSameOrAfter(moment(holiday.startDate)) &&
+      moment(date, 'YYYY-MM-DD').isSameOrBefore(moment(holiday.endDate))
+  );
+};
 
   const getAttendanceForDate = (date) => {
     return attendanceData.find((att) => att.date === date);
@@ -73,6 +100,9 @@ const AttendanceData = ({ route, navigation }) => {
 
     const attendance = getAttendanceForDate(date);
     if (attendance) return 'Present';
+
+    const holiday = getHolidayForDate(date)
+    if(holiday) return 'Holiday';
 
     return 'Absent';
   };

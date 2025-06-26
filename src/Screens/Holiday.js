@@ -4,6 +4,8 @@ import auth from '@react-native-firebase/auth'
 import firestrore from '@react-native-firebase/firestore'
 import DateTimePicker from "@react-native-community/datetimepicker"
 import moment from "moment";
+import { useTheme } from "../ThemeContext";
+import AppText from "../Components/AppText";
 
 const Holiday=()=>{
     const [hr,setHr]=useState(false)
@@ -15,6 +17,7 @@ const Holiday=()=>{
     const [showStartPicker,setShowStartPicker]=useState(false)
     const [showEndPicker,setShowEndPicker]=useState(false)
     const [modalVisible,setModalVisible]=useState(false)
+    const {theme} = useTheme()
     const user=auth().currentUser
 
     useEffect(()=>{
@@ -91,8 +94,8 @@ const Holiday=()=>{
     }
 
     return(
-        <View>
-        <Text style={{margin:20,fontSize:20}}>Holidays</Text>
+        <View style={{backgroundColor:theme.background,flex:1}}>
+        <AppText style={{margin:20,fontSize:20}}>Holidays</AppText>
         {hr && (
         <TouchableOpacity style={{alignItems:'center',justifyContent:'center',backgroundColor:'rgba(8, 131, 180, 1)',margin:20,height:40,width:'90%'}} onPress={()=>{setModalVisible(true);setEditingId(null);setStartDate(new Date());setEndDate(new Date());setReason("")}}>
             <Text style={{color:'white'}}>Add Holiday</Text>
@@ -101,16 +104,16 @@ const Holiday=()=>{
             data={holidays}
             keyExtractor={(item)=>item.id}
             renderItem={({item})=>{ return(
-                <View style={{backgroundColor: "#f0f0f0",marginBottom:15,borderRadius:10,padding:10,borderWidth:1,marginHorizontal:10}}>
-                <Text style={{fontSize:16,fontWeight:"bold"}}>Holiday: {item.reason}</Text>
-                <Text>{moment(item.startDate).format("MMM D")} - {moment(item.endDate).format("MMM D")}</Text>
+                <View style={{backgroundColor: "#f0f0f0",marginBottom:15,borderRadius:10,padding:10,borderWidth:1,marginHorizontal:10,backgroundColor:theme.background,borderColor:theme.text}}>
+                <AppText style={{fontSize:16,fontWeight:"bold"}}>Holiday: {item.reason}</AppText>
+                <AppText>{moment(item.startDate).format("MMM D")} - {moment(item.endDate).format("MMM D")}</AppText>
                 {hr && (
                     <View style={{marginTop:5,gap:10,flexDirection:'row'}}>
                         <TouchableOpacity onPress={()=>openEditModal(item)}>
-                            <Text style={{color:'orange'}}>Edit</Text>
+                            <AppText style={{color:'orange'}}>Edit</AppText>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={()=>deleteHoliday(item.id)}>
-                            <Text style={{color:'red'}}>Delete</Text>
+                            <AppText style={{color:'red'}}>Delete</AppText>
                         </TouchableOpacity>
                     </View>
                 )}

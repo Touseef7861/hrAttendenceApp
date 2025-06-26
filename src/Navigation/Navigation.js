@@ -16,6 +16,7 @@ import ChangePassword from '../Screens/ChangePassword';
 import AttendanceData from '../Screens/Team/AttendenceData';
 import CorrectionForm from '../Screens/Home/CorrectionForm';
 import Notification from '../Screens/Home/Notification';
+import Settings from '../Screens/Profile/Settings';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -76,12 +77,16 @@ const TeamStack = () => {
   );
 };
 
-const Navigation = () => {
+const Navigation = ({user}) => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="BottomTabs" component={BottomTabs} />
+      <Stack.Navigator 
+      // initialRouteName="Login"
+       screenOptions={{ headerShown: false }}>
+       {!user ? 
+        (<Stack.Screen name="Login" component={Login} />): (
+          <>
+             <Stack.Screen name="BottomTabs" component={BottomTabs} />
         <Stack.Screen name="LeaveForm" component={LeaveForm} />
         <Stack.Screen name="LeaveDetails" component={LeaveDetails} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
@@ -90,6 +95,10 @@ const Navigation = () => {
         <Stack.Screen name="AttendanceData" component={AttendanceData} />
         <Stack.Screen name="CorrectionForm" component={CorrectionForm} />
         <Stack.Screen name="Notification" component={Notification} />
+        <Stack.Screen name="Settings" component={Settings} />
+          </>
+        )}
+       
       </Stack.Navigator>
     </NavigationContainer>
   );

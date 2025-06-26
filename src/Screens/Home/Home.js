@@ -6,12 +6,16 @@ import auth from '@react-native-firebase/auth'
 import firestore  from '@react-native-firebase/firestore'
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../ThemeContext';
+import AppButton from '../../Components/AppButton';
+import AppText from '../../Components/AppText';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const daysToShow = 14;
 
 const Home = () => {
   const today = new Date();
+  const {theme} =useTheme();
 
   const [checkInTime, setCheckInTime] = useState(null);
   const [breakInTime, setBreakInTime] = useState(null);
@@ -314,19 +318,19 @@ useEffect(() => {
   );
 
   return (
-    <View style={{  flex: 1 }}>
+    <View style={[styles.container, { backgroundColor: theme.background ,flex:1}]}>
       <View style={{ flexDirection: 'row', margin: 20, alignItems: 'center' }}>
           <Image
   style={{ height: 60, width: 60, borderRadius: 30, borderWidth: 1, borderColor: 'black' }}
   source={userData?.imageUrl ? { uri: userData.imageUrl } : {uri:''}}
 />
         <View style={{ marginLeft: 10, width: 170 }}>
-        <Text style={{ fontSize: 19 }}>{userData?.name || ''}</Text>
-        <Text>{userData?.designation || ''}</Text>
+        <AppText style={{ fontSize: 19 ,color:theme.text}}>{userData?.name || ''}</AppText>
+        <AppText style={{color:theme.text}}>{userData?.designation || ''}</AppText>
         </View>
         <TouchableOpacity style={{ height: 40, width: 40, borderRadius: 20, borderWidth: 0.1, justifyContent: 'center', alignItems: 'center' }}
         onPress={()=>navigation.navigate('Notification')}>
-          <Image style={{ height: 20, width: 20 }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/2645/2645897.png' }} />
+          <Image style={{ height: 20, width: 20, tintColor:theme.text }} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/2645/2645897.png' }} />
         </TouchableOpacity>
         <TouchableOpacity style={{ height: 40, width: 40, borderRadius: 20, borderWidth: 0.1, justifyContent: 'center', alignItems: 'center',marginLeft:10 }}
         onPress={()=>navigation.navigate('CorrectionForm')}>
@@ -344,70 +348,70 @@ useEffect(() => {
       />
       </View>
 
-      <Text style={{ margin: 20, fontSize: 15 }}>Today Attendance</Text>
+      <AppText style={{ margin: 20,color:theme.text }}>Today Attendance</AppText>
 
       <View>
         <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-          <View style={styles.card}>
+          <View style={[styles.card,{borderColor:theme.text}]}>
             <View style={styles.iconRow}>
               <View style={styles.iconBox}>
                 <Image style={styles.icon} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/906/906801.png' }} />
               </View>
-              <Text style={{ fontSize: 16 }}>Check In</Text>
+              <AppText>Check In</AppText>
             </View>
-            <Text style={{ fontSize: 20, marginTop: 10 }}>
+            <AppText style={{ fontSize: 20, marginTop: 10 }}>
               {checkInTime ? new Date(checkInTime).toLocaleTimeString() : '--:--'}
-            </Text>
-            <Text style={{ fontSize: 16 }}>{checkInTime ? 'On Time' : 'Pending'}</Text>
+            </AppText>
+            <AppText >{checkInTime ? 'On Time' : 'Pending'}</AppText>
           </View>
 
-          <View style={styles.card}>
+          <View style={[styles.card,{borderColor:theme.text}]}>
             <View style={styles.iconRow}>
               <View style={styles.iconBox}>
                 <Image style={styles.icon} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/992/992680.png' }} />
               </View>
-              <Text style={{ fontSize: 16 }}>Check Out</Text>
+              <AppText >Check Out</AppText>
             </View>
-            <Text style={{ fontSize: 20, marginTop: 10 }}>
+            <AppText style={{ fontSize: 20, marginTop: 10 }}>
               {checkOutTime ? new Date(checkOutTime).toLocaleTimeString() : '--:--'}
-            </Text>
-            <Text style={{ fontSize: 16 }}>{checkOutTime ? 'Completed' : 'Pending'}</Text>
+            </AppText>
+            <AppText>{checkOutTime ? 'Completed' : 'Pending'}</AppText>
           </View>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <View style={styles.card}>
+          <View style={[styles.card,{borderColor:theme.text}]}>
             <View style={styles.iconRow}>
               <View style={styles.iconBox}>
                 <Image style={styles.icon} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/906/906801.png' }} />
               </View>
-              <Text style={{ fontSize: 16 }}>Break Time</Text>
+              <AppText>Break Time</AppText>
             </View>
-            <Text style={{ fontSize: 20, marginTop: 10 }}>
+            <AppText style={{ fontSize: 20, marginTop: 10}}>
             {breakInTime && breakOutTime && breakDuration ? breakDuration : '--:--'}
 
-            </Text>
-            <Text style={{ fontSize: 16 }}>Avg time 60</Text>
+            </AppText>
+            <AppText>Avg time 60</AppText>
           </View>
 
-          <View style={styles.card}>
+          <View style={[styles.card,{borderColor:theme.text}]}>
             <View style={styles.iconRow}>
               <View style={styles.iconBox}>
                 <Image style={styles.icon} source={{ uri: 'https://cdn-icons-png.flaticon.com/128/992/992680.png' }} />
               </View>
-              <Text style={{ fontSize: 16 }}>Total Days</Text>
+              <AppText>Total Days</AppText>
             </View>
-            <Text style={{ fontSize: 20, marginTop: 10 }}>{workingDays}</Text>
-            <Text style={{ fontSize: 16 }}>Working days</Text>
+            <AppText style={{ fontSize: 20, marginTop: 10}}>{workingDays}</AppText>
+            <AppText>Working days</AppText>
           </View>
         </View>
       </View>
 
       {/* Your Activity Section */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginHorizontal: 20 }}>
-        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Your Activity</Text>
+        <AppText style={{ fontSize: 15, fontWeight: 'bold' }}>Your Activity</AppText>
         <TouchableOpacity>
-          <Text style={{ color: 'skyblue' }}>View All</Text>
+          <AppText style={{ color: 'skyblue' }}>View All</AppText>
         </TouchableOpacity>
       </View>
 
@@ -437,12 +441,12 @@ useEffect(() => {
     <View key={index} style={{ padding: 15, backgroundColor: 'white', marginBottom: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <Image source={{ uri: iconUri }} style={{ width: 20, height: 20, marginRight: 10 }} />
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 15 }}>{log.type}</Text>
-        <Text style={{ fontSize: 10 }}>{log.now}</Text>
+        <AppText style={{ fontSize: 15}}>{log.type}</AppText>
+        <AppText style={{ fontSize: 10 }}>{log.now}</AppText>
       </View>
       <View>
-        <Text style={{ fontSize: 15 }}>{log.time}</Text>
-        <Text style={{ fontSize: 10 }}>on Time</Text>
+        <AppText style={{ fontSize: 15 }}>{log.time}</AppText>
+        <AppText style={{ fontSize: 10 }}>on Time</AppText>
       </View>
     </View>
   );
@@ -468,7 +472,7 @@ useEffect(() => {
           : 'yellow',
     },
   ]}>
-              <Text style={styles.swipeText}>
+              <AppText style={styles.swipeText}>
                 {!checkInTime
                   ? 'Swipe to Check In'
                   : !breakInTime
@@ -476,13 +480,13 @@ useEffect(() => {
                   : !breakOutTime
                   ? 'Swipe to Break Out'
                   : 'Swipe to Check Out'}
-              </Text>
+              </AppText>
               {panResponder.current && (
   <Animated.View
     {...panResponder.current.panHandlers}
     style={[styles.swipeButton, { transform: [{ translateX: pan.x }] }]}
   >
-    <Text style={styles.arrow}>{'>'}</Text>
+    <AppText style={styles.arrow}>{'>'}</AppText>
   </Animated.View>
 )}
 
@@ -559,7 +563,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     fontSize: 16,
-    color: '#555',
   },
   swipeButton: {
     width: 40,
@@ -572,6 +575,7 @@ const styles = StyleSheet.create({
   arrow: {
     color: 'white',
     fontSize: 22,
+    
   },
 });
 
