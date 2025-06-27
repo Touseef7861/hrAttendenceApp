@@ -17,6 +17,8 @@ import AttendanceData from '../Screens/Team/AttendenceData';
 import CorrectionForm from '../Screens/Home/CorrectionForm';
 import Notification from '../Screens/Home/Notification';
 import Settings from '../Screens/Profile/Settings';
+import MyProfile from '../Screens/Profile/MyProfile';
+import ViewAll from '../Screens/Home/ViewAll';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -96,6 +98,8 @@ const Navigation = ({user}) => {
         <Stack.Screen name="CorrectionForm" component={CorrectionForm} />
         <Stack.Screen name="Notification" component={Notification} />
         <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="MyProfile" component={MyProfile} />
+        <Stack.Screen name="ViewAll" component={ViewAll} />
           </>
         )}
        

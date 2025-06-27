@@ -80,7 +80,7 @@ const Team = () => {
                 alignItems: 'center',
                 gap: 10,
                 backgroundColor:theme.background,
-                borderColor:theme.text
+                
               }}
               onPress={() =>
                 navigation.navigate('AttendanceData', {

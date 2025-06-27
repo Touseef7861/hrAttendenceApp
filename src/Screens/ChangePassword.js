@@ -1,13 +1,24 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, TextInput, Alert, StyleSheet } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  Alert,
+  StyleSheet,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
+import { useTheme } from "../ThemeContext";
+import AppText from "../Components/AppText";
+import AppButton from "../Components/AppButton";
 
 const ChangePassword = () => {
   const navigation = useNavigation();
   const [hide, setHide] = useState(true);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { theme } = useTheme();
 
   const handlePasswordUpdate = () => {
     if (!password || !confirmPassword) {
@@ -36,32 +47,35 @@ const ChangePassword = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Image
-            style={styles.icon}
+            style={[styles.icon, { tintColor: theme.text }]}
             source={{ uri: "https://cdn-icons-png.flaticon.com/128/130/130882.png" }}
           />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Change Password</Text>
+        <AppText style={[styles.headerTitle, { color: theme.text }]}>
+          Change Password
+        </AppText>
       </View>
 
       {/* Password Field */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>New Password</Text>
+      <View style={[styles.inputContainer, { borderColor: theme.primary }]}>
+        <AppText style={[styles.label, { color: theme.primary }]}>New Password</AppText>
         <View style={styles.inputRow}>
           <TextInput
             value={password}
             placeholder="Enter new password"
+            placeholderTextColor={theme.text + '88'}
             onChangeText={setPassword}
             secureTextEntry={hide}
-            style={styles.textInput}
+            style={[styles.textInput, { color: theme.text }]}
           />
           <TouchableOpacity onPress={() => setHide(!hide)}>
             <Image
-              style={styles.icon}
+              style={[styles.icon, { tintColor: theme.text }]}
               source={{
                 uri: hide
                   ? "https://cdn-icons-png.flaticon.com/128/17091/17091358.png"
@@ -73,19 +87,20 @@ const ChangePassword = () => {
       </View>
 
       {/* Confirm Password Field */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Confirm Password</Text>
+      <View style={[styles.inputContainer, { borderColor: theme.primary }]}>
+        <AppText style={[styles.label, { color: theme.primary }]}>Confirm Password</AppText>
         <View style={styles.inputRow}>
           <TextInput
             value={confirmPassword}
             placeholder="Confirm new password"
+            placeholderTextColor={theme.text + '88'}
             onChangeText={setConfirmPassword}
             secureTextEntry={hide}
-            style={styles.textInput}
+            style={[styles.textInput, { color: theme.text }]}
           />
           <TouchableOpacity onPress={() => setHide(!hide)}>
             <Image
-              style={styles.icon}
+              style={[styles.icon, { tintColor: theme.text }]}
               source={{
                 uri: hide
                   ? "https://cdn-icons-png.flaticon.com/128/17091/17091358.png"
@@ -97,20 +112,22 @@ const ChangePassword = () => {
       </View>
 
       {/* Update Button */}
-      <TouchableOpacity style={styles.updateButton} onPress={handlePasswordUpdate}>
-        <Text style={styles.updateButtonText}>Update Password</Text>
-      </TouchableOpacity>
+      <AppButton
+        onPress={handlePasswordUpdate}
+        style={styles.updateButton}
+        textStyle={styles.updateButtonText}
+      >
+        Update Password
+      </AppButton>
     </View>
   );
 };
 
 export default ChangePassword;
 
-// 🌟 STYLES
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
   },
   header: {
     flexDirection: "row",
@@ -131,7 +148,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     borderWidth: 1,
-    borderColor: 'blue',
     borderRadius: 15,
     height: 60,
     width: '90%',
@@ -141,7 +157,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   label: {
-    color: 'skyblue',
     marginBottom: 3,
   },
   inputRow: {
@@ -155,15 +170,13 @@ const styles = StyleSheet.create({
   updateButton: {
     height: 50,
     width: '90%',
+    alignSelf: 'center',
     justifyContent: "center",
     alignItems: 'center',
     borderRadius: 10,
-    backgroundColor: 'skyblue',
-    margin: 20,
-    marginTop: 400,
+    marginTop: 60,
   },
   updateButtonText: {
-    color: 'white',
     fontSize: 15,
   },
 });

@@ -58,12 +58,13 @@ const Profile = () => {
           {
             icon: 'https://cdn-icons-png.flaticon.com/128/456/456283.png',
             label: 'My Profile',
-            onPress: () => {},
+            onPress: () => navigation.navigate('MyProfile',{userData}),
           },
           {
             icon: 'https://cdn-icons-png.flaticon.com/128/3364/3364202.png',
             label: 'Settings',
             onPress: () => navigation.navigate('Settings'),
+            
           },
           {
             icon: 'https://cdn-icons-png.flaticon.com/128/10349/10349096.png',

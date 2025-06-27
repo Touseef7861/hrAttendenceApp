@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import auth from '@react-native-firebase/auth';
-
+import { useTheme } from "../ThemeContext";
+import AppText from "../Components/AppText";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
    const [hide, setHide] = useState(true);
+   const {theme} = useTheme()
 
   const handleSignIn = () => {
     auth()
@@ -22,7 +24,7 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1,backgroundColor:'white' }}>
+    <View style={{ flex: 1,backgroundColor:theme.background }}>
       <Image
         style={{ height: 90, width: 90, marginTop: 20 }}
         source={{
@@ -30,37 +32,41 @@ const Login = ({ navigation }) => {
         }}
       />
       <View style={{ marginLeft: 15 }}>
-        <Text style={{ fontSize: 28 }}>Welcome Back</Text>
-        <Text style={{ fontSize: 28 }}>
-          to <Text style={{ color: 'blue' }}>HR Attendee</Text>
-        </Text>
-        <Text style={{ fontSize: 15, opacity: 0.4 }}>Hello there, login to continue</Text>
+        <AppText style={{ fontSize: 28 }}>Welcome Back</AppText>
+        <AppText style={{ fontSize: 28 }}>
+          to <AppText style={{ color: 'skyblue' }}>HR Attendee</AppText>
+        </AppText>
+        <AppText style={{ fontSize: 15, opacity: 0.4 }}>Hello there, login to continue</AppText>
       </View>
       <View style={{
         borderWidth: 1, borderColor: 'blue', borderRadius: 15, height: 60, width: '90%',
         paddingVertical: 5, paddingHorizontal: 10, margin: 15
       }}>
-        <Text style={{ color: 'skyblue' }}>Email Address</Text>
+        <AppText style={{ color: 'skyblue' }}>Email Address</AppText>
         <TextInput
           value={email}
           placeholder="Enter your Email"
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
+          style={{color:theme.text}}
+          placeholderTextColor={theme.text}
         />
+        
       </View>
       <View style={{
         borderWidth: 1, borderColor: 'blue', borderRadius: 15, height: 60, width: '90%',
         paddingVertical: 5, paddingHorizontal: 10, marginHorizontal: 15
       }}>
-        <Text style={{ color: 'skyblue' }}>Password</Text>
+        <AppText style={{ color: 'skyblue' }}>Password</AppText>
         <View style={{flexDirection:'row',alignItems:'center'}}>
           <TextInput
           value={password}
           placeholder="Enter your Password"
           onChangeText={setPassword}
           secureTextEntry={hide}
-          style={{width:270}}
+          style={{width:270,color:theme.text}}
+          placeholderTextColor={theme.text}
         />
         <TouchableOpacity
                 style={{  }}
@@ -78,9 +84,9 @@ const Login = ({ navigation }) => {
         </View>
       </View>
       <TouchableOpacity>
-        <Text style={{ color: 'skyblue', alignSelf: 'flex-end', margin: 10, marginRight: 25 }}>
+        <AppText style={{ color: 'skyblue', alignSelf: 'flex-end', margin: 10, marginRight: 25 }}>
         Forgot Password?
-      </Text>
+      </AppText>
       </TouchableOpacity>
       <TouchableOpacity
         style={{
@@ -89,7 +95,7 @@ const Login = ({ navigation }) => {
         }}
         onPress={handleSignIn}
       >
-        <Text style={{ color: 'white' }}>Login</Text>
+        <AppText style={{ color: 'white' }}>Login</AppText>
       </TouchableOpacity>
     </View>
   );

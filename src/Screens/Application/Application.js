@@ -326,12 +326,12 @@ const filteredLeaves = () => {
       {/* Summary Cards */}
       <View>
         <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-          <View style={[styles.card,{borderColor:'blue'}]}><AppText style={styles.title}>Leave Balance</AppText><Text style={[styles.value,{color:'blue'}]}>{stats.balance}</Text></View>
-          <View style={[styles.card,{borderColor:"orange"}]}><AppText style={styles.title}>Approved</AppText><Text style={[styles.value,{color:'orange'}]}>{stats.approved}</Text></View>
+          <View style={[styles.card,{borderColor:'skyblue'}]}><AppText style={styles.title}>Leave Balance</AppText><AppText style={[styles.value,{color:'skyblue'}]}>{stats.balance}</AppText></View>
+          <View style={[styles.card,{borderColor:"orange"}]}><AppText style={styles.title}>Approved</AppText><AppText style={[styles.value,{color:'orange'}]}>{stats.approved}</AppText></View>
         </View>
         <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.card,{borderColor:'blue'}]}><AppText style={styles.title}>Pending</AppText><Text style={[styles.value,{color:'blue'}]}>{stats.pending}</Text></View>
-          <View style={[styles.card,{borderColor:'red'}]}><AppText style={styles.title}>Cancelled</AppText><Text style={[styles.value,{color:'red'}]}>{stats.cancelled}</Text></View>
+          <View style={[styles.card,{borderColor:'skyblue'}]}><AppText style={styles.title}>Pending</AppText><AppText style={[styles.value,{color:'skyblue'}]}>{stats.pending}</AppText></View>
+          <View style={[styles.card,{borderColor:'red'}]}><AppText style={styles.title}>Cancelled</AppText><AppText style={[styles.value,{color:'red'}]}>{stats.cancelled}</AppText></View>
         </View>
       </View>
 

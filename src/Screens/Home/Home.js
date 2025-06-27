@@ -410,7 +410,7 @@ useEffect(() => {
       {/* Your Activity Section */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginHorizontal: 20 }}>
         <AppText style={{ fontSize: 15, fontWeight: 'bold' }}>Your Activity</AppText>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=> navigation.navigate('ViewAll', {activityLog})}>
           <AppText style={{ color: 'skyblue' }}>View All</AppText>
         </TouchableOpacity>
       </View>
@@ -441,12 +441,12 @@ useEffect(() => {
     <View key={index} style={{ padding: 15, backgroundColor: 'white', marginBottom: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <Image source={{ uri: iconUri }} style={{ width: 20, height: 20, marginRight: 10 }} />
       <View style={{ flex: 1 }}>
-        <AppText style={{ fontSize: 15}}>{log.type}</AppText>
-        <AppText style={{ fontSize: 10 }}>{log.now}</AppText>
+        <Text style={{ fontSize: 15}}>{log.type}</Text>
+        <Text style={{ fontSize: 10 }}>{log.now}</Text>
       </View>
       <View>
-        <AppText style={{ fontSize: 15 }}>{log.time}</AppText>
-        <AppText style={{ fontSize: 10 }}>on Time</AppText>
+        <Text style={{ fontSize: 15 }}>{log.time}</Text>
+        <Text style={{ fontSize: 10 }}>on Time</Text>
       </View>
     </View>
   );
@@ -472,7 +472,7 @@ useEffect(() => {
           : 'yellow',
     },
   ]}>
-              <AppText style={styles.swipeText}>
+              <Text style={styles.swipeText}>
                 {!checkInTime
                   ? 'Swipe to Check In'
                   : !breakInTime
@@ -480,7 +480,7 @@ useEffect(() => {
                   : !breakOutTime
                   ? 'Swipe to Break Out'
                   : 'Swipe to Check Out'}
-              </AppText>
+              </Text>
               {panResponder.current && (
   <Animated.View
     {...panResponder.current.panHandlers}

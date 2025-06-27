@@ -41,7 +41,11 @@ const Settings = ({ navigation }) => {
         trackColor={{ false: '#767577', true: '#81b0ff' }}
       />
       </View>
-
+      <TouchableOpacity onPress={()=> navigation.navigate('ChangePassword')}>
+        <AppText fontSize={20} color={theme.text}>
+          Change Password
+        </AppText>
+      </TouchableOpacity>
       
       
     </View>
